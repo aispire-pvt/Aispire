@@ -2,21 +2,25 @@ import React, { useState, useEffect, useRef } from 'react';
 
 export default function ValuesSection() {
   const sectionRef = useRef(null);
-  const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
-  const [scrollShift, setScrollShift] = useState(0);
   const [stickyTop, setStickyTop] = useState(0);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
       const x = (e.clientX - window.innerWidth / 2) * 0.015;
       const y = (e.clientY - window.innerHeight / 2) * 0.015;
-      setMouseOffset({ x, y });
+      const el = sectionRef.current;
+      if (el) {
+        el.style.setProperty('--mouse-x', `${x}px`);
+        el.style.setProperty('--mouse-y', `${y}px`);
+      }
     };
 
     const handleScroll = () => {
-      if (sectionRef.current) {
-        const rect = sectionRef.current.getBoundingClientRect();
-        setScrollShift(rect.top * -0.15);
+      const el = sectionRef.current;
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const shift = rect.top * -0.15;
+        el.style.setProperty('--scroll-y', `${shift}px`);
       }
     };
 
@@ -28,9 +32,9 @@ export default function ValuesSection() {
       }
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
     handleScroll();
     handleResize();
 
@@ -74,20 +78,23 @@ export default function ValuesSection() {
       className="sticky z-50 w-full min-h-screen flex flex-col justify-center bg-white text-black py-12"
       style={{ top: `${stickyTop}px` }}
     >
-      {/* Extracted High-Fidelity waves gradient shape (image_13.png) */}
+      {/* Extracted High-Fidelity waves gradient shape (image_13.webp) */}
       <div 
         className="absolute left-1/2 max-w-none pointer-events-none select-none z-0 opacity-[0.95] transition-transform duration-300 ease-out"
         style={{
           top: '0px',
           width: '2205px',
           height: '721px',
-          transform: `translate(calc(-50% + ${mouseOffset.x}px), ${mouseOffset.y + scrollShift}px)`,
+          transform: 'translate(calc(-50% + var(--mouse-x, 0px)), calc(var(--mouse-y, 0px) + var(--scroll-y, 0px)))',
+          willChange: 'transform',
         }}
       >
         <img 
-          src="/assets/image_13.png" 
+          src="/assets/image_13.webp" 
           alt="" 
           className="w-full h-full object-contain animate-float-wave"
+          loading="lazy"
+          decoding="async"
         />
       </div>
 

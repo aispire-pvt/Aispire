@@ -88,7 +88,7 @@ export default function Navigation() {
             id="logo"
           >
             <img
-              src="/assets/image_1.png"
+              src="/assets/image_1.webp"
               alt="AISPIRE Official Brand Logo"
               className="h-[20px] w-auto object-contain transition-all duration-300 group-hover:brightness-110 group-hover:drop-shadow-[0_0_8px_rgba(243,113,36,0.5)]"
             />

@@ -451,3 +451,13 @@
   0%, 100% { box-shadow: 0 0 0 0 rgba(243, 113, 36, 0); }
   50% { box-shadow: 0 0 12px 3px rgba(243, 113, 36, 0.25); }
 }
+
+/* ===================================================
+   PAINT & LAYOUT CALCULATION OPTIMIZATIONS
+   =================================================== */
+
+/* Skip layout and painting of below-the-fold sections when they are out of viewport */
+section:not(#hero) {
+  content-visibility: auto;
+  contain-intrinsic-size: 100vh;
+}

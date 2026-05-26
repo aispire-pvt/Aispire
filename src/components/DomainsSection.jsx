@@ -5,21 +5,31 @@ export default function DomainsSection() {
   const sectionRef = useRef(null);
   const [hoveredRow, setHoveredRow] = useState(null);
   const [hoveredCol, setHoveredCol] = useState(null);
-  const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
-  const [scrollShift, setScrollShift] = useState(0);
   const [stickyTop, setStickyTop] = useState(0);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
       const x = (e.clientX - window.innerWidth / 2) * 0.015;
       const y = (e.clientY - window.innerHeight / 2) * 0.015;
-      setMouseOffset({ x, y });
+      const el = sectionRef.current;
+      if (el) {
+        el.style.setProperty('--mouse-x', `${x}px`);
+        el.style.setProperty('--mouse-y', `${y}px`);
+        el.style.setProperty('--mouse-x-slow', `${x * 0.8}px`);
+        el.style.setProperty('--mouse-y-slow', `${y * 0.8}px`);
+        el.style.setProperty('--mouse-x-mid', `${x * 0.9}px`);
+        el.style.setProperty('--mouse-y-mid', `${y * 0.9}px`);
+      }
     };
 
     const handleScroll = () => {
-      if (sectionRef.current) {
-        const rect = sectionRef.current.getBoundingClientRect();
-        setScrollShift(rect.top * -0.15);
+      const el = sectionRef.current;
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const shift = rect.top * -0.15;
+        el.style.setProperty('--scroll-y', `${shift}px`);
+        el.style.setProperty('--scroll-y-slow', `${shift * 0.8}px`);
+        el.style.setProperty('--scroll-y-mid', `${shift * 0.9}px`);
       }
     };
 
@@ -31,9 +41,9 @@ export default function DomainsSection() {
       }
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
     handleScroll();
     handleResize();
 
@@ -87,43 +97,46 @@ export default function DomainsSection() {
       className="sticky z-30 w-full min-h-screen flex flex-col justify-center bg-black text-white py-12"
       style={{ top: `${stickyTop}px` }}
     >
-      {/* Extracted High-Fidelity waves gradient shape (image_7.png) */}
+      {/* Extracted High-Fidelity waves gradient shape (image_7.webp) */}
       <div 
         className="absolute left-1/2 max-w-none pointer-events-none select-none z-0 opacity-[0.95] transition-transform duration-300 ease-out"
         style={{
           top: '0px',
           width: '2205px',
           height: '641px',
-          transform: `translate(calc(-50% + ${mouseOffset.x}px), ${mouseOffset.y + scrollShift}px)`,
+          transform: 'translate(calc(-50% + var(--mouse-x, 0px)), calc(var(--mouse-y, 0px) + var(--scroll-y, 0px)))',
+          willChange: 'transform',
         }}
       >
-        <img src="/assets/image_7.png" alt="" className="w-full h-full object-contain animate-float-wave" />
+        <img src="/assets/image_7.webp" alt="" className="w-full h-full object-contain animate-float-wave" loading="lazy" decoding="async" />
       </div>
 
-      {/* Extracted Branding Mesh A (image_12.png) */}
+      {/* Extracted Branding Mesh A (image_12.webp) */}
       <div 
         className="absolute left-1/2 max-w-none pointer-events-none select-none z-0 opacity-[0.1] transition-transform duration-300 ease-out"
         style={{
           top: '-100px',
           width: '3118px',
           height: '1287px',
-          transform: `translate(calc(-50% + ${mouseOffset.x * 0.8}px), ${mouseOffset.y * 0.8 + scrollShift * 0.8}px)`,
+          transform: 'translate(calc(-50% + var(--mouse-x-slow, 0px)), calc(var(--mouse-y-slow, 0px) + var(--scroll-y-slow, 0px)))',
+          willChange: 'transform',
         }}
       >
-        <img src="/assets/image_12.png" alt="" className="w-full h-full object-contain animate-float-wave-slow" />
+        <img src="/assets/image_12.webp" alt="" className="w-full h-full object-contain animate-float-wave-slow" loading="lazy" decoding="async" />
       </div>
 
-      {/* Extracted Branding Mesh B (image_14.png) */}
+      {/* Extracted Branding Mesh B (image_14.webp) */}
       <div 
         className="absolute left-1/2 max-w-none pointer-events-none select-none z-0 opacity-[0.1] transition-transform duration-300 ease-out"
         style={{
           top: '-100px',
           width: '3118px',
           height: '1287px',
-          transform: `translate(calc(-50% + ${mouseOffset.x * 0.9}px), ${mouseOffset.y * 0.9 + scrollShift * 0.9}px)`,
+          transform: 'translate(calc(-50% + var(--mouse-x-mid, 0px)), calc(var(--mouse-y-mid, 0px) + var(--scroll-y-mid, 0px)))',
+          willChange: 'transform',
         }}
       >
-        <img src="/assets/image_14.png" alt="" className="w-full h-full object-contain animate-float-wave" />
+        <img src="/assets/image_14.webp" alt="" className="w-full h-full object-contain animate-float-wave" loading="lazy" decoding="async" />
       </div>
 
       {/* ORGANIC GLOW — replaces the rectangular top linear-gradient.

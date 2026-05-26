@@ -2,21 +2,31 @@ import React, { useState, useEffect, useRef } from 'react';
 
 export default function CTASection() {
   const sectionRef = useRef(null);
-  const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
-  const [scrollShift, setScrollShift] = useState(0);
   const [stickyTop, setStickyTop] = useState(0);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
       const x = (e.clientX - window.innerWidth / 2) * 0.015;
       const y = (e.clientY - window.innerHeight / 2) * 0.015;
-      setMouseOffset({ x, y });
+      const el = sectionRef.current;
+      if (el) {
+        el.style.setProperty('--mouse-x', `${x}px`);
+        el.style.setProperty('--mouse-y', `${y}px`);
+        el.style.setProperty('--mouse-x-slow', `${x * 0.8}px`);
+        el.style.setProperty('--mouse-y-slow', `${y * 0.8}px`);
+        el.style.setProperty('--mouse-x-fast', `${x * 1.2}px`);
+        el.style.setProperty('--mouse-y-fast', `${y * 1.2}px`);
+      }
     };
 
     const handleScroll = () => {
-      if (sectionRef.current) {
-        const rect = sectionRef.current.getBoundingClientRect();
-        setScrollShift(rect.top * -0.15);
+      const el = sectionRef.current;
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const shift = rect.top * -0.15;
+        el.style.setProperty('--scroll-y', `${shift}px`);
+        el.style.setProperty('--scroll-y-slow', `${shift * 0.85}px`);
+        el.style.setProperty('--scroll-y-fast', `${shift * 1.15}px`);
       }
     };
 
@@ -28,9 +38,9 @@ export default function CTASection() {
       }
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
     handleScroll();
     handleResize();
 
@@ -51,43 +61,46 @@ export default function CTASection() {
       className="sticky z-60 w-full min-h-screen flex flex-col justify-center bg-black text-white text-left py-12"
       style={{ top: `${stickyTop}px` }}
     >
-      {/* Extracted High-Fidelity waves gradient shape A (image_15.png) */}
+      {/* Extracted High-Fidelity waves gradient shape A (image_15.webp) */}
       <div 
         className="absolute left-1/2 max-w-none pointer-events-none select-none -z-10 opacity-[0.95] transition-transform duration-300 ease-out"
         style={{
           top: '-2px',
           width: '2417px',
           height: '733px',
-          transform: `translate(calc(-50% + ${mouseOffset.x * 0.8}px), ${mouseOffset.y * 0.8 + scrollShift * 0.85}px)`,
+          transform: 'translate(calc(-50% + var(--mouse-x-slow, 0px)), calc(var(--mouse-y-slow, 0px) + var(--scroll-y-slow, 0px)))',
+          willChange: 'transform',
         }}
       >
-        <img src="/assets/image_15.png" alt="" className="w-full h-full object-contain animate-float-wave" />
+        <img src="/assets/image_15.webp" alt="" className="w-full h-full object-contain animate-float-wave" loading="lazy" decoding="async" />
       </div>
 
-      {/* Extracted High-Fidelity waves gradient shape B (image_16.png) */}
+      {/* Extracted High-Fidelity waves gradient shape B (image_16.webp) */}
       <div 
         className="absolute left-1/2 max-w-none pointer-events-none select-none -z-10 opacity-[0.95] transition-transform duration-300 ease-out"
         style={{
           top: '0px',
           width: '2417px',
           height: '651px',
-          transform: `translate(calc(-50% + ${mouseOffset.x}px), ${mouseOffset.y + scrollShift * 1.0}px)`,
+          transform: 'translate(calc(-50% + var(--mouse-x, 0px)), calc(var(--mouse-y, 0px) + var(--scroll-y, 0px)))',
+          willChange: 'transform',
         }}
       >
-        <img src="/assets/image_16.png" alt="" className="w-full h-full object-contain animate-float-wave-slow" />
+        <img src="/assets/image_16.webp" alt="" className="w-full h-full object-contain animate-float-wave-slow" loading="lazy" decoding="async" />
       </div>
 
-      {/* Extracted High-Fidelity waves gradient shape C (image_17.png) */}
+      {/* Extracted High-Fidelity waves gradient shape C (image_17.webp) */}
       <div 
         className="absolute left-1/2 max-w-none pointer-events-none select-none -z-10 opacity-[0.95] transition-transform duration-300 ease-out"
         style={{
           top: '76px',
           width: '2417px',
           height: '733px',
-          transform: `translate(calc(-50% + ${mouseOffset.x * 1.2}px), ${mouseOffset.y * 1.2 + scrollShift * 1.15}px)`,
+          transform: 'translate(calc(-50% + var(--mouse-x-fast, 0px)), calc(var(--mouse-y-fast, 0px) + var(--scroll-y-fast, 0px)))',
+          willChange: 'transform',
         }}
       >
-        <img src="/assets/image_17.png" alt="" className="w-full h-full object-contain animate-float-wave" />
+        <img src="/assets/image_17.webp" alt="" className="w-full h-full object-contain animate-float-wave" loading="lazy" decoding="async" />
       </div>
 
       {/* ORGANIC AMBIENT GLOW — replaces the harsh 135deg diagonal linear-gradient.
@@ -160,9 +173,11 @@ export default function CTASection() {
             {/* 2. Official High-Tech Design Element (from pdf image_2.png, perfectly transparent) */}
             <div className="relative z-10 w-[232px] h-[289px] transition-transform duration-500 hover:scale-105 filter drop-shadow-[0_15px_30px_rgba(0,0,0,0.6)]">
               <img 
-                src="/assets/image_2.png" 
+                src="/assets/image_2.webp" 
                 alt="AISPIRE Decorative Geometric Shape" 
                 className="w-full h-full object-contain pointer-events-none"
+                loading="lazy"
+                decoding="async"
                 onError={(e) => {
                   e.target.style.display = 'none';
                 }}

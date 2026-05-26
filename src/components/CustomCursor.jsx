@@ -51,35 +51,33 @@ export default function CustomCursor() {
       rafId = requestAnimationFrame(animate);
     };
 
-    // Hover state for interactive elements
-    const applyHoverListeners = () => {
-      const interactives = document.querySelectorAll('a, button, [role="button"], input, select');
-      interactives.forEach(el => {
-        el.addEventListener('mouseenter', () => {
-          ring.classList.add('cursor-hover');
-          dot.classList.add('cursor-hover');
-        });
-        el.addEventListener('mouseleave', () => {
-          ring.classList.remove('cursor-hover');
-          dot.classList.remove('cursor-hover');
-        });
-      });
+    // Delegation-based hover state for interactive elements
+    const onMouseOver = (e) => {
+      const target = e.target;
+      if (!target) return;
+      
+      const interactive = target.closest('a, button, [role="button"], input, select, textarea, [data-interactive]');
+      if (interactive) {
+        ring.classList.add('cursor-hover');
+        dot.classList.add('cursor-hover');
+      } else {
+        ring.classList.remove('cursor-hover');
+        dot.classList.remove('cursor-hover');
+      }
     };
-
-    // Apply after slight delay so DOM is ready
-    const timer = setTimeout(applyHoverListeners, 500);
 
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseleave', onMouseLeave);
     document.addEventListener('mouseenter', onMouseEnter);
+    document.addEventListener('mouseover', onMouseOver);
     rafId = requestAnimationFrame(animate);
 
     return () => {
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseleave', onMouseLeave);
       document.removeEventListener('mouseenter', onMouseEnter);
+      document.removeEventListener('mouseover', onMouseOver);
       cancelAnimationFrame(rafId);
-      clearTimeout(timer);
     };
   }, []);
 

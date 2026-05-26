@@ -3,8 +3,6 @@ import { Cpu, Server, Shield, Layers, ChevronDown } from 'lucide-react';
 
 export default function HeroSection() {
   const sectionRef = useRef(null);
-  const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
-  const [scrollShift, setScrollShift] = useState(0);
   const [mounted, setMounted] = useState(false);
   const [stickyTop, setStickyTop] = useState(0);
 
@@ -14,13 +12,28 @@ export default function HeroSection() {
     const handleMouseMove = (e) => {
       const x = (e.clientX - window.innerWidth / 2) * 0.015;
       const y = (e.clientY - window.innerHeight / 2) * 0.015;
-      setMouseOffset({ x, y });
+      const el = sectionRef.current;
+      if (el) {
+        el.style.setProperty('--mouse-x', `${x}px`);
+        el.style.setProperty('--mouse-y', `${y}px`);
+        el.style.setProperty('--mouse-x-fast', `${x * 1.2}px`);
+        el.style.setProperty('--mouse-y-fast', `${y * 1.2}px`);
+        el.style.setProperty('--mouse-x-slow', `${x * 0.8}px`);
+        el.style.setProperty('--mouse-y-slow', `${y * 0.8}px`);
+        el.style.setProperty('--mouse-x-mid', `${x * 0.9}px`);
+        el.style.setProperty('--mouse-y-mid', `${y * 0.9}px`);
+      }
     };
     
     const handleScroll = () => {
-      if (sectionRef.current) {
-        const rect = sectionRef.current.getBoundingClientRect();
-        setScrollShift(rect.top * -0.15);
+      const el = sectionRef.current;
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const shift = rect.top * -0.15;
+        el.style.setProperty('--scroll-y', `${shift}px`);
+        el.style.setProperty('--scroll-y-fast', `${shift * 1.1}px`);
+        el.style.setProperty('--scroll-y-slow', `${shift * 0.9}px`);
+        el.style.setProperty('--scroll-y-mid', `${shift * 0.95}px`);
       }
     };
 
@@ -32,9 +45,9 @@ export default function HeroSection() {
       }
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
     handleScroll();
     handleResize();
 
@@ -67,56 +80,60 @@ export default function HeroSection() {
       className="sticky z-10 w-full min-h-screen flex flex-col"
       style={{ top: `${stickyTop}px` }}
     >
-      {/* ─── Background Layer: Ambient Orange Wave (image_6.png) ─── */}
+      {/* ─── Background Layer: Ambient Orange Wave (image_6.webp) ─── */}
       <div 
         className="absolute left-1/2 max-w-none pointer-events-none select-none z-0 opacity-[0.85] transition-transform duration-300 ease-out"
         style={{
           top: '-562px',
           width: '5032px',
           height: '1887px',
-          transform: `translate(calc(-50% + ${mouseOffset.x}px), ${mouseOffset.y + scrollShift}px)`,
+          transform: 'translate(calc(-50% + var(--mouse-x, 0px)), calc(var(--mouse-y, 0px) + var(--scroll-y, 0px)))',
+          willChange: 'transform',
         }}
       >
-        <img src="/assets/image_6.png" alt="" className="w-full h-full object-contain animate-float-wave" />
+        <img src="/assets/image_6.webp" alt="" className="w-full h-full object-contain animate-float-wave" decoding="async" />
       </div>
 
-      {/* ─── Background Layer: Overlay Ambient (image_10.png) ─── */}
+      {/* ─── Background Layer: Overlay Ambient (image_10.webp) ─── */}
       <div 
         className="absolute left-1/2 max-w-none pointer-events-none select-none z-0 opacity-[0.85] transition-transform duration-300 ease-out"
         style={{
           top: '-562px',
           width: '5032px',
           height: '1887px',
-          transform: `translate(calc(-50% + ${mouseOffset.x * 1.2}px), ${mouseOffset.y * 1.2 + scrollShift * 1.1}px)`,
+          transform: 'translate(calc(-50% + var(--mouse-x-fast, 0px)), calc(var(--mouse-y-fast, 0px) + var(--scroll-y-fast, 0px)))',
+          willChange: 'transform',
         }}
       >
-        <img src="/assets/image_10.png" alt="" className="w-full h-full object-contain animate-float-wave-slow" />
+        <img src="/assets/image_10.webp" alt="" className="w-full h-full object-contain animate-float-wave-slow" decoding="async" />
       </div>
 
-      {/* ─── Background Layer: Line Mesh A (image_8.png) ─── */}
+      {/* ─── Background Layer: Line Mesh A (image_8.webp) ─── */}
       <div 
         className="absolute left-1/2 max-w-none pointer-events-none select-none z-0 opacity-[0.12] transition-transform duration-300 ease-out"
         style={{
           top: '186px',
           width: '2811px',
           height: '1496px',
-          transform: `translate(calc(-50% + ${mouseOffset.x * 0.8}px), ${mouseOffset.y * 0.8 + scrollShift * 0.9}px)`,
+          transform: 'translate(calc(-50% + var(--mouse-x-slow, 0px)), calc(var(--mouse-y-slow, 0px) + var(--scroll-y-slow, 0px)))',
+          willChange: 'transform',
         }}
       >
-        <img src="/assets/image_8.png" alt="" className="w-full h-full object-contain animate-float-wave" />
+        <img src="/assets/image_8.webp" alt="" className="w-full h-full object-contain animate-float-wave" decoding="async" />
       </div>
 
-      {/* ─── Background Layer: Line Mesh B (image_9.png) ─── */}
+      {/* ─── Background Layer: Line Mesh B (image_9.webp) ─── */}
       <div 
         className="absolute left-1/2 max-w-none pointer-events-none select-none z-0 opacity-[0.12] transition-transform duration-300 ease-out"
         style={{
           top: '186px',
           width: '2811px',
           height: '1496px',
-          transform: `translate(calc(-50% + ${mouseOffset.x * 0.9}px), ${mouseOffset.y * 0.9 + scrollShift * 0.95}px)`,
+          transform: 'translate(calc(-50% + var(--mouse-x-mid, 0px)), calc(var(--mouse-y-mid, 0px) + var(--scroll-y-mid, 0px)))',
+          willChange: 'transform',
         }}
       >
-        <img src="/assets/image_9.png" alt="" className="w-full h-full object-contain animate-float-wave-slow" />
+        <img src="/assets/image_9.webp" alt="" className="w-full h-full object-contain animate-float-wave-slow" decoding="async" />
       </div>
 
       {/* ─── Organic Ambient Glow ─── 
@@ -163,12 +180,13 @@ export default function HeroSection() {
               {/* Spotlight backdrop */}
               <div className="absolute w-[280px] h-[280px] rounded-full bg-orange/40 blur-[75px] -z-10 animate-pulse" />
               
-              {/* Official High-Tech Design Element (image_2.png) */}
+              {/* Official High-Tech Design Element (image_2.webp) */}
               <div className="relative z-10 w-[232px] h-[289px] transition-transform duration-500 hover:scale-105 filter drop-shadow-[0_15px_30px_rgba(0,0,0,0.6)]">
                 <img 
-                  src="/assets/image_2.png" 
+                  src="/assets/image_2.webp" 
                   alt="AISPIRE Decorative Geometric Shape" 
                   className="w-full h-full object-contain pointer-events-none"
+                  decoding="async"
                   onError={(e) => {
                     e.target.style.display = 'none';
                     e.target.nextSibling.style.display = 'flex';

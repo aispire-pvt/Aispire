@@ -182,9 +182,11 @@ export default function Footer() {
           <div className="lg:col-span-4 flex items-center justify-start lg:justify-end select-none h-full pt-4 lg:pt-10">
             <div className="w-[200px] sm:w-[232px] transition-transform duration-500 hover:scale-105 filter drop-shadow-[0_15px_30px_rgba(0,0,0,0.6)]">
               <img 
-                src="/assets/image_2.png" 
+                src="/assets/image_2.webp" 
                 alt="AISPIRE Vertical Logo" 
                 className="w-full h-auto object-contain"
+                loading="lazy"
+                decoding="async"
                 onError={(e) => {
                   e.target.style.display = 'none';
                 }}
