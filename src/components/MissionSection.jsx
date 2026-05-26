@@ -4,6 +4,7 @@ export default function MissionSection() {
   const sectionRef = useRef(null);
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
   const [scrollShift, setScrollShift] = useState(0);
+  const [stickyTop, setStickyTop] = useState(0);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -19,13 +20,27 @@ export default function MissionSection() {
       }
     };
 
+    const handleResize = () => {
+      if (sectionRef.current) {
+        const height = sectionRef.current.offsetHeight;
+        const viewportHeight = window.innerHeight;
+        setStickyTop(Math.min(0, viewportHeight - height));
+      }
+    };
+
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize);
     handleScroll();
+    handleResize();
+
+    const timer = setTimeout(handleResize, 150);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timer);
     };
   }, []);
 
@@ -33,7 +48,8 @@ export default function MissionSection() {
     <section 
       id="mission" 
       ref={sectionRef}
-      className="sticky top-0 z-40 w-full min-h-screen flex flex-col justify-center overflow-hidden bg-black text-center py-12"
+      className="sticky z-40 w-full min-h-screen flex flex-col justify-center bg-black text-center py-12"
+      style={{ top: `${stickyTop}px` }}
     >
       {/* Extracted High-Fidelity waves gradient shape A (image_11.png) */}
       <div 
@@ -62,19 +78,20 @@ export default function MissionSection() {
       </div>
 
       {/* ORGANIC AMBIENT GLOW — replaces the rectangular linear gradient overlay.
-          Soft radial blobs glow from the bottom and center — no hard edges. */}
+          Soft radial blobs glow from the bottom and center — no hard edges.
+          Increased transparency by 20% per user request. */}
       <div 
         className="absolute inset-0 pointer-events-none -z-10"
         style={{
           background: [
-            'radial-gradient(ellipse 70% 45% at 50% 100%, rgba(243,113,36,0.28) 0%, rgba(200,60,10,0.10) 50%, transparent 72%)',
-            'radial-gradient(ellipse 50% 50% at 50% 50%, rgba(243,113,36,0.06) 0%, transparent 70%)',
+            'radial-gradient(ellipse 70% 45% at 50% 100%, rgba(243,113,36,0.11) 0%, rgba(200,60,10,0.04) 50%, transparent 72%)',
+            'radial-gradient(ellipse 50% 50% at 50% 50%, rgba(243,113,36,0.02) 0%, transparent 70%)',
           ].join(', '),
         }}
       />
 
       {/* Ambient glow node behind orbit centerpiece */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[55vh] rounded-full bg-orange/[0.03] blur-[160px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[55vh] rounded-full bg-orange/[0.012] blur-[160px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10 flex flex-col items-center">
         {/* Overline Label */}
@@ -91,7 +108,7 @@ export default function MissionSection() {
           <div 
             className="absolute w-[320px] h-[320px] rounded-full pointer-events-none animate-pulse"
             style={{
-              background: 'radial-gradient(ellipse 60% 60% at 50% 50%, rgba(243,113,36,0.12) 0%, rgba(243,113,36,0.04) 50%, transparent 75%)',
+              background: 'radial-gradient(ellipse 60% 60% at 50% 50%, rgba(243,113,36,0.05) 0%, rgba(243,113,36,0.015) 50%, transparent 75%)',
               filter: 'blur(20px)',
             }}
           />

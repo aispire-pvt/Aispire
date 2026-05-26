@@ -4,6 +4,7 @@ export default function ValuesSection() {
   const sectionRef = useRef(null);
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
   const [scrollShift, setScrollShift] = useState(0);
+  const [stickyTop, setStickyTop] = useState(0);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -19,13 +20,27 @@ export default function ValuesSection() {
       }
     };
 
+    const handleResize = () => {
+      if (sectionRef.current) {
+        const height = sectionRef.current.offsetHeight;
+        const viewportHeight = window.innerHeight;
+        setStickyTop(Math.min(0, viewportHeight - height));
+      }
+    };
+
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize);
     handleScroll();
+    handleResize();
+
+    const timer = setTimeout(handleResize, 150);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timer);
     };
   }, []);
 
@@ -56,7 +71,8 @@ export default function ValuesSection() {
     <section 
       id="values" 
       ref={sectionRef}
-      className="sticky top-0 z-50 w-full min-h-screen flex flex-col justify-center overflow-hidden bg-white text-black py-12"
+      className="sticky z-50 w-full min-h-screen flex flex-col justify-center bg-white text-black py-12"
+      style={{ top: `${stickyTop}px` }}
     >
       {/* Extracted High-Fidelity waves gradient shape (image_13.png) */}
       <div 
@@ -76,15 +92,16 @@ export default function ValuesSection() {
       </div>
 
       {/* ORGANIC TOP GLOW — replaces the fixed h-[450px] rectangular gradient.
-          Using inset-0 radial so it fades naturally without a hard pixel-edge cutoff at 450px. */}
+          Using inset-0 radial so it fades naturally without a hard pixel-edge cutoff at 450px.
+          Opacity reduced slightly (transparency increased) per user request. */}
       <div 
         className="absolute inset-0 pointer-events-none -z-10"
         style={{
           background: [
-            'radial-gradient(ellipse 110% 55% at 50% 0%, rgba(243,113,36,0.45) 0%, rgba(243,113,36,0.15) 38%, transparent 62%)',
-            'radial-gradient(ellipse 50% 25% at 10% 0%, rgba(243,113,36,0.12) 0%, transparent 55%)',
+            'radial-gradient(ellipse 110% 55% at 50% 0%, rgba(243,113,36,0.22) 0%, rgba(243,113,36,0.08) 38%, transparent 62%)',
+            'radial-gradient(ellipse 50% 25% at 10% 0%, rgba(243,113,36,0.06) 0%, transparent 55%)',
           ].join(', '),
-          opacity: 0.85,
+          opacity: 0.8,
         }}
       />
 

@@ -1,7 +1,19 @@
 import React from 'react';
+import { Cpu, Server, Shield, Layers } from 'lucide-react';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+
+  const tickerItems = [
+    { text: "HARDWARE ENGINEERING", icon: <Cpu size={16} className="text-orange" /> },
+    { text: "SOFTWARE DEVELOPMENT", icon: <Server size={16} className="text-white/60" /> },
+    { text: "CLOUDBASE SAAS", icon: <Layers size={16} className="text-orange" /> },
+    { text: "EMBEDDED ARCHITECTURE", icon: <Cpu size={16} className="text-white/60" /> },
+    { text: "ROBOTICS & ROBOTIC SYSTEMS", icon: <Shield size={16} className="text-orange" /> },
+    { text: "INTELLIGENT DIAGNOSTICS", icon: <Server size={16} className="text-white/60" /> },
+    { text: "SENSOR FUSION NODES", icon: <Layers size={16} className="text-orange" /> },
+    { text: "IOT EDGE COMPUTING", icon: <Cpu size={16} className="text-white/60" /> }
+  ];
 
   const handleScrollTo = (id) => {
     const element = document.getElementById(id);
@@ -21,53 +33,26 @@ export default function Footer() {
 
   return (
     <footer className="w-full bg-black text-white border-t border-white/5">
-      {/* 1. UPPER ORANGE NAVIGATION BAR */}
-      <div 
-        className="w-full bg-orange text-black py-4 select-none"
-        style={{ minHeight: '67px' }}
-      >
-        <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-6 h-full">
-          {/* Left: Domain Links separated by dots */}
-          <div 
-            className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-[14px] sm:text-[15px] font-heading font-black tracking-[0.15em] uppercase"
-            style={{ fontFamily: '"Roc Grotesk", "Outfit", sans-serif' }}
-          >
-            <a 
-              href="#domains" 
-              onClick={(e) => { e.preventDefault(); handleScrollTo('domains'); }}
-              className="hover:opacity-75 transition-opacity duration-300 flex items-center gap-1.5"
-            >
-              Hardware Engineering
-            </a>
-            <span className="text-black/30 text-lg">•</span>
-            <a 
-              href="#domains" 
-              onClick={(e) => { e.preventDefault(); handleScrollTo('domains'); }}
-              className="hover:opacity-75 transition-opacity duration-300"
-            >
-              Software Development
-            </a>
-            <span className="text-black/30 text-lg">•</span>
-            <a 
-              href="#domains" 
-              onClick={(e) => { e.preventDefault(); handleScrollTo('domains'); }}
-              className="hover:opacity-75 transition-opacity duration-300"
-            >
-              SaaS Platforms
-            </a>
-          </div>
+      {/* ─── BOTTOM TICKER — replaces upper orange nav bar, identical to hero ticker ─── */}
+      <div className="w-full bg-black border-b border-white/5 py-4 overflow-hidden relative z-10 select-none">
+        <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-black to-transparent z-20 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-black to-transparent z-20 pointer-events-none" />
 
-          {/* Right: Aligned Company Logo Mark (PDF extracted transparent image_1.png, inverted to solid black in orange bar) */}
-          <div className="flex items-center">
-            <img 
-              src="/assets/image_1.png" 
-              alt="AISPIRE Logo Mark" 
-              className="w-[140px] h-[14px] object-contain invert brightness-0"
-              onError={(e) => {
-                e.target.style.display = 'none';
-              }}
-            />
-          </div>
+        <div className="flex animate-ticker whitespace-nowrap gap-16">
+          {tickerItems.map((item, idx) => (
+            <div key={`tick-footer-1-${idx}`} className="flex items-center gap-4 text-white/90 font-heading font-extrabold text-[15px] tracking-[0.25em]">
+              {item.icon}
+              <span>{item.text}</span>
+              <span className="text-orange ml-8">•</span>
+            </div>
+          ))}
+          {tickerItems.map((item, idx) => (
+            <div key={`tick-footer-2-${idx}`} className="flex items-center gap-4 text-white/90 font-heading font-extrabold text-[15px] tracking-[0.25em]">
+              {item.icon}
+              <span>{item.text}</span>
+              <span className="text-orange ml-8">•</span>
+            </div>
+          ))}
         </div>
       </div>
 

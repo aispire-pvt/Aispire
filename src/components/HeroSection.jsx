@@ -6,6 +6,7 @@ export default function HeroSection() {
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
   const [scrollShift, setScrollShift] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const [stickyTop, setStickyTop] = useState(0);
 
   useEffect(() => {
     setMounted(true);
@@ -23,13 +24,28 @@ export default function HeroSection() {
       }
     };
 
+    const handleResize = () => {
+      if (sectionRef.current) {
+        const height = sectionRef.current.offsetHeight;
+        const viewportHeight = window.innerHeight;
+        setStickyTop(Math.min(0, viewportHeight - height));
+      }
+    };
+
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize);
     handleScroll();
+    handleResize();
+
+    // Also run a small timeout to make sure fonts/images are loaded and height is accurate
+    const timer = setTimeout(handleResize, 150);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timer);
     };
   }, []);
 
@@ -48,7 +64,8 @@ export default function HeroSection() {
     <section 
       id="hero" 
       ref={sectionRef}
-      className="sticky top-0 z-10 w-full min-h-screen flex flex-col overflow-hidden"
+      className="sticky z-10 w-full min-h-screen flex flex-col"
+      style={{ top: `${stickyTop}px` }}
     >
       {/* ─── Background Layer: Ambient Orange Wave (image_6.png) ─── */}
       <div 
@@ -121,11 +138,6 @@ export default function HeroSection() {
           
           {/* Left Side: Copy */}
           <div className="lg:col-span-8 flex flex-col justify-center text-left">
-            {/* Subtle Tag */}
-            <div className={`flex items-center gap-2 mb-6 transition-all duration-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-              <span className="h-[2px] w-8 bg-orange animate-pulse" />
-              <span className="text-orange font-bold text-[13px] tracking-[0.25em] uppercase">AI-Driven Aspiration</span>
-            </div>
 
             {/* Heading */}
             <h1 
@@ -143,21 +155,10 @@ export default function HeroSection() {
             >
               A multi-domain technology company engineering solutions across hardware, software, SaaS — and reaching toward healthcare and robotics.
             </p>
-
-            {/* Scroll Indicator */}
-            <div className="flex items-center gap-3 mt-12 select-none pointer-events-none">
-              <span 
-                className="text-white/35 text-[11px] tracking-[0.25em] uppercase animate-scroll-bounce"
-                style={{ fontFamily: '"Avenir Next LT Pro", "Plus Jakarta Sans", sans-serif' }}
-              >
-                Scroll
-              </span>
-              <ChevronDown size={14} className="text-white/35 animate-scroll-bounce" style={{ animationDelay: '0.12s' }} />
-            </div>
           </div>
 
           {/* Right Side: Geometric Design Element */}
-          <div className="lg:col-span-4 flex items-center justify-center relative select-none">
+          <div className="lg:col-span-4 flex items-center justify-center relative select-none lg:translate-x-10 lg:-translate-y-[5px]">
             <div className="relative w-[280px] h-[340px] flex items-center justify-center">
               {/* Spotlight backdrop */}
               <div className="absolute w-[280px] h-[280px] rounded-full bg-orange/40 blur-[75px] -z-10 animate-pulse" />

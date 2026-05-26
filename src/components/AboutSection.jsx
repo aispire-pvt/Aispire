@@ -2,12 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 
 export default function AboutSection() {
   const sectionRef = useRef(null);
-  const statsRef = useRef(null);
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
   const [scrollShift, setScrollShift] = useState(0);
-  const [statsVisible, setStatsVisible] = useState(false);
-  const [countDomains, setCountDomains] = useState(0);
-  const [countYears, setCountYears] = useState(0);
+  const [stickyTop, setStickyTop] = useState(0);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -23,51 +20,36 @@ export default function AboutSection() {
       }
     };
 
+    const handleResize = () => {
+      if (sectionRef.current) {
+        const height = sectionRef.current.offsetHeight;
+        const viewportHeight = window.innerHeight;
+        setStickyTop(Math.min(0, viewportHeight - height));
+      }
+    };
+
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize);
     handleScroll();
+    handleResize();
+
+    const timer = setTimeout(handleResize, 150);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timer);
     };
   }, []);
-
-  // Animated stat counters triggered on scroll-enter
-  useEffect(() => {
-    if (!statsRef.current) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !statsVisible) {
-          setStatsVisible(true);
-          const duration = 1600;
-          const startTime = Date.now();
-          const tick = () => {
-            const elapsed = Date.now() - startTime;
-            const p = Math.min(elapsed / duration, 1);
-            const eased = 1 - Math.pow(1 - p, 3);
-            setCountDomains(Math.floor(eased * 5));
-            setCountYears(Math.floor(eased * 3));
-            if (p < 1) requestAnimationFrame(tick);
-            else {
-              setCountDomains(5);
-              setCountYears(3);
-            }
-          };
-          requestAnimationFrame(tick);
-        }
-      },
-      { threshold: 0.4 }
-    );
-    observer.observe(statsRef.current);
-    return () => observer.disconnect();
-  }, [statsVisible]);
 
   return (
     <section 
       id="about" 
       ref={sectionRef}
-      className="sticky top-0 z-20 w-full min-h-screen flex flex-col justify-center overflow-hidden bg-white text-black text-left py-12"
+      className="sticky z-20 w-full min-h-screen flex flex-col justify-center bg-white text-black text-left py-12"
+      style={{ top: `${stickyTop}px` }}
     >
       {/* Extracted High-Fidelity waves gradient bottom channel (image_3.png) */}
       <div 
@@ -136,61 +118,13 @@ export default function AboutSection() {
 
           {/* Heading */}
           <h2 
-            className="text-black text-4xl sm:text-5xl lg:text-[58px] font-black uppercase leading-[1.05] tracking-tight mb-10"
+            className="text-black text-4xl sm:text-5xl lg:text-[58px] font-black uppercase leading-[1.05] tracking-tight mb-4"
             style={{ fontFamily: '"Roc Grotesk", "Outfit", sans-serif' }}
           >
             Driven by <br />
             <span className="text-orange">curiosity.</span> <br />
             <span>Built to last.</span>
           </h2>
-
-          {/* Animated Stat Counters */}
-          <div ref={statsRef} className="flex flex-col gap-5 border-l-2 border-orange/30 pl-5">
-            <div>
-              <div 
-                className="text-black text-[40px] font-black leading-none"
-                style={{ fontFamily: '"Roc Grotesk", "Outfit", sans-serif' }}
-              >
-                {countDomains}<span className="text-orange">+</span>
-              </div>
-              <div 
-                className="text-black/50 text-[13px] tracking-[0.1em] uppercase mt-1"
-                style={{ fontFamily: '"Avenir Next LT Pro", "Plus Jakarta Sans", sans-serif' }}
-              >
-                Active Domains
-              </div>
-            </div>
-
-            <div>
-              <div 
-                className="text-black text-[40px] font-black leading-none"
-                style={{ fontFamily: '"Roc Grotesk", "Outfit", sans-serif' }}
-              >
-                {countYears}<span className="text-orange">+</span>
-              </div>
-              <div 
-                className="text-black/50 text-[13px] tracking-[0.1em] uppercase mt-1"
-                style={{ fontFamily: '"Avenir Next LT Pro", "Plus Jakarta Sans", sans-serif' }}
-              >
-                Years of Building
-              </div>
-            </div>
-
-            <div>
-              <div 
-                className="text-black text-[40px] font-black leading-none"
-                style={{ fontFamily: '"Roc Grotesk", "Outfit", sans-serif' }}
-              >
-                ∞
-              </div>
-              <div 
-                className="text-black/50 text-[13px] tracking-[0.1em] uppercase mt-1"
-                style={{ fontFamily: '"Avenir Next LT Pro", "Plus Jakarta Sans", sans-serif' }}
-              >
-                Ambition
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Right Side: Elegant Structured Content in black text */}
@@ -198,8 +132,8 @@ export default function AboutSection() {
           className="lg:col-span-7 text-left flex flex-col gap-8 text-[15px] sm:text-[16px] text-black/80 leading-relaxed font-light"
           style={{ fontFamily: '"Avenir Next LT Pro", "Plus Jakarta Sans", sans-serif' }}
         >
-          <p className="first-letter:text-orange first-letter:text-5xl first-letter:font-extrabold first-letter:float-left first-letter:mr-3 first-letter:font-heading">
-            AISPIRE Pvt Ltd is a technology company with ambition written into its name — AI-driven aspiration. We are a team of engineers, designers, and thinkers working across disciplines to build products and platforms that solve real problems at real scale.
+          <p>
+            <span className="text-orange font-black uppercase tracking-[0.05em]" style={{ fontFamily: '"Roc Grotesk", sans-serif', fontSize: '1.25rem' }}>AISPIRE</span> Pvt Ltd is a technology company with ambition written into its name — AI-driven aspiration. We are a team of engineers, designers, and thinkers working across disciplines to build products and platforms that solve real problems at real scale.
           </p>
 
           <p>

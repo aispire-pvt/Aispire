@@ -11,7 +11,7 @@ import CustomCursor from './components/CustomCursor';
 
 export default function App() {
   return (
-    <div className="relative min-h-screen text-white bg-black select-none overflow-x-hidden selection:bg-orange selection:text-black">
+    <div className="relative min-h-screen text-white bg-black select-none overflow-x-clip selection:bg-orange selection:text-black">
       {/* Premium animated dual-ring cursor */}
       <CustomCursor />
 

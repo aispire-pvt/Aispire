@@ -4,6 +4,7 @@ export default function CTASection() {
   const sectionRef = useRef(null);
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
   const [scrollShift, setScrollShift] = useState(0);
+  const [stickyTop, setStickyTop] = useState(0);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -19,13 +20,27 @@ export default function CTASection() {
       }
     };
 
+    const handleResize = () => {
+      if (sectionRef.current) {
+        const height = sectionRef.current.offsetHeight;
+        const viewportHeight = window.innerHeight;
+        setStickyTop(Math.min(0, viewportHeight - height));
+      }
+    };
+
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize);
     handleScroll();
+    handleResize();
+
+    const timer = setTimeout(handleResize, 150);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timer);
     };
   }, []);
 
@@ -33,7 +48,8 @@ export default function CTASection() {
     <section 
       id="contact" 
       ref={sectionRef}
-      className="sticky top-0 z-60 w-full min-h-screen flex flex-col justify-center overflow-hidden bg-black text-white text-left py-12"
+      className="sticky z-60 w-full min-h-screen flex flex-col justify-center bg-black text-white text-left py-12"
+      style={{ top: `${stickyTop}px` }}
     >
       {/* Extracted High-Fidelity waves gradient shape A (image_15.png) */}
       <div 
@@ -76,22 +92,23 @@ export default function CTASection() {
 
       {/* ORGANIC AMBIENT GLOW — replaces the harsh 135deg diagonal linear-gradient.
           Radial ellipse anchored to the left where the "Let's Build Together" copy lives,
-          fading organically into the black background with no visible diagonal stripe. */}
+          fading organically into the black background with no visible diagonal stripe.
+          Increased transparency by 70% (retained 30% of baseline opacity) per user request to optimize 'Together' text visibility. */}
       <div 
         className="absolute inset-0 pointer-events-none -z-10"
         style={{
           background: [
-            'radial-gradient(ellipse 70% 80% at 15% 50%, rgba(243,113,36,0.50) 0%, rgba(200,80,20,0.18) 45%, transparent 70%)',
-            'radial-gradient(ellipse 40% 40% at 55% 85%, rgba(200,60,10,0.12) 0%, transparent 60%)',
+            'radial-gradient(ellipse 70% 80% at 15% 50%, rgba(243,113,36,0.06) 0%, rgba(200,80,20,0.024) 45%, transparent 70%)',
+            'radial-gradient(ellipse 40% 40% at 55% 85%, rgba(200,60,10,0.018) 0%, transparent 60%)',
           ].join(', '),
-          opacity: 0.9,
+          opacity: 0.8,
         }}
       />
 
       {/* Background glow highlights */}
       <div className="absolute top-[10%] left-1/3 w-[60vw] h-[40vh] rounded-full bg-gradient-to-r from-orange/5 via-orange-accent/5 to-amber-500/5 blur-[130px] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <div className="max-w-7xl mx-auto w-full px-6 md:px-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
         
         {/* Left Side: Text and Buttons (col-span-8) */}
         <div className="lg:col-span-8 flex flex-col justify-center">
@@ -109,7 +126,7 @@ export default function CTASection() {
             style={{ fontFamily: '"Roc Grotesk", "Outfit", sans-serif' }}
           >
             Let's Build <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange to-orange-accent animate-pulse">Together</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange via-orange-accent to-amber-500 animate-pulse">Together</span>
           </h2>
 
           {/* Buttons */}
@@ -135,7 +152,7 @@ export default function CTASection() {
         </div>
 
         {/* Right Side: Replicated Design Element & Orange Spotlight Backdrop (col-span-4) */}
-        <div className="lg:col-span-4 flex items-center justify-center lg:justify-end relative select-none">
+        <div className="lg:col-span-4 flex items-center justify-center lg:justify-end relative select-none lg:translate-x-10">
           <div className="relative w-[280px] h-[340px] flex items-center justify-center">
             {/* 1. Transparent PNG Spotlight backdrop (layered for smoothness) */}
             <div className="absolute w-[280px] h-[280px] rounded-full bg-orange/40 blur-[75px] -z-10 animate-pulse" />

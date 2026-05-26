@@ -7,6 +7,7 @@ export default function DomainsSection() {
   const [hoveredCol, setHoveredCol] = useState(null);
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
   const [scrollShift, setScrollShift] = useState(0);
+  const [stickyTop, setStickyTop] = useState(0);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -22,13 +23,27 @@ export default function DomainsSection() {
       }
     };
 
+    const handleResize = () => {
+      if (sectionRef.current) {
+        const height = sectionRef.current.offsetHeight;
+        const viewportHeight = window.innerHeight;
+        setStickyTop(Math.min(0, viewportHeight - height));
+      }
+    };
+
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize);
     handleScroll();
+    handleResize();
+
+    const timer = setTimeout(handleResize, 150);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timer);
     };
   }, []);
 
@@ -69,7 +84,8 @@ export default function DomainsSection() {
     <section 
       id="domains" 
       ref={sectionRef}
-      className="sticky top-0 z-30 w-full min-h-screen flex flex-col justify-center overflow-hidden bg-black text-white py-12"
+      className="sticky z-30 w-full min-h-screen flex flex-col justify-center bg-black text-white py-12"
+      style={{ top: `${stickyTop}px` }}
     >
       {/* Extracted High-Fidelity waves gradient shape (image_7.png) */}
       <div 
